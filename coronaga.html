@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<style>
+		body {
+			text-align: center;
+			padding: 5em;
+			background-color: #000000;
+			
+		}
+
+		
+		div {
+			width: 40em;
+			margin: auto;
+		}
+
+		div.logo {
+			position: absolute;
+			top: 0em;
+		}
+		
+		div.game {
+			position: absolute;
+			top: 15em;
+			
+		}
+
+		canvas {
+			position: relative;
+			margin-top: 6em;
+			border: 1em solid #D0D0D0;
+			background-color: #000000;
+			border-radius: 3em;
+		}
+	</style>
+
+</head>
+<body onload="startGame()">
+<div>
+
+	<div class="logo"><img src="coronaga.svg" width="600px"></div>
+
+	<div class="game">	
+	<script>
+
+var myGamePiece;
+var myVictims = [];
+
+function startGame() {
+	myAimX = 220;
+	myAimY = 560;
+	//myAimVirusX = (myAimX + 15);
+    myAimVirusY = (myAimY - 40);
+	myGamePiece = new component(60,60, "communism.svg", myAimX, myAimY, "image");
+	//myNewVictim = myVictims.push(new baddie(30, 70, "baddie.svg", 200, 100, "image"));
+	myBaddie1 = new baddie(30, 70, "baddie.svg", 20, 100, "image", "1");
+	myBaddie2 = new baddie(30, 70, "baddie.svg", 80, 100, "image", "1");
+	myBaddie3 = new baddie(30, 70, "baddie.svg", 140, 100, "image", "1");
+	myBaddie4 = new baddie(30, 70, "baddie.svg", 200, 100, "image", "1");
+	myBaddie5 = new baddie(30, 70, "baddie.svg", 260, 100, "image", "1");
+	var wave1 = ["myBaddie1", "myBaddie2", "myBaddie3", "myBaddie4", "myBaddie5"];
+	myVirus = new virus(30,30, "virus.svg", myAimX, myAimY, "image");
+	//myScore = new displayscore("30px", "Consolas", "black", 280, 60, "text");
+	//myScore = new displayscore();
+	launchCode = 0;
+	hit = 0;
+	nextwave = 0;
+	score = 0;
+	peoplePoint = 0;
+	myGameArea.start();
+
+}
+
+var myGameArea = {
+	canvas : document.createElement("canvas"),
+	start : function() {
+		this.canvas.width=480;
+		this.canvas.height=640;
+		this.context = this.canvas.getContext("2d");
+		document.body.insertBefore(this.canvas,
+			document.body.childNodes[0]);
+		this.frameNo = 0;
+		this.interval = setInterval(updateGameArea, 20);
+		window.addEventListener('keydown', function (e) {
+            myGameArea.key = e.keyCode;
+        })
+        window.addEventListener('keyup', function (e) {
+            myGameArea.key = false;
+        })
+		},
+		clear : function() {
+			this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
+		},
+		stop : function() {
+			clearInterval(this.interval);
+		}
+}	
+
+
+
+
+/*function everyinterval(n) {
+  if ((myGameArea.frameNo / n) % 1 == 0) {return true;}
+  return false;
+}*/
+	function component(width, height, color, x, y, type) {
+		this.type = type;
+		if (type == "image") {
+			this.image = new Image();
+			this.image.src = color;
+		}
+		this.width = width;
+		this.height = height;
+		this.speedX = 0;
+		this.speedY = 0;
+		//this.x = x;
+		//this.y = y;
+		this.update = function() {
+			ctx = myGameArea.context;
+			if (type == "image") {
+				ctx.drawImage(this.image,
+					//this.x,
+					myAimX,
+					//this.y,
+					myAimY,
+					this.width, this.height);
+			} 
+
+
+
+			else {
+				ctx.fillStyle = color;
+				ctx.fillRect(/*this.x*/myAimX, /*this.y*/myAimY, this.width, this.height);
+			}
+		}
+		this.newPos = function() {
+			//this.x += this.speedX;
+			myAimX += this.speedX;
+			//this.y += this.speedY;
+			myAimY += this.speedY;
+		}
+		this.crashCommunism = function(otherobject) {
+	  var tip = myAimY;
+	  var leftedge = myAimX;
+	  var rightedge = (myAimX + 60);
+	  var otherbottom = otherobject.y + (otherobject.height);
+	  var otherleft = otherobject.x;
+	  var otherright = (otherobject.x + 30);
+	  if (hit == 0) {
+	  if(tip <= otherbottom) { 
+	  		if(leftedge >= otherright) {
+	  			hit = 1;
+	  		}
+	  		else { hit = 0;}
+	  		if(rightedge <= otherleft) {
+	  			hit = 1;
+	  		}
+			else { hit = 0;}
+							 } 
+	  return hit;
+	  hit = 0;
+	  tip = 0;
+	  leftedge = 0;
+	  rightedge = 0;
+	  otherbottom = 0;
+	  otherleft = 0;
+	  otherright = 0;
+
+	}
+}
+	}
+
+	function baddie(width, height, color, x, y, type) {
+		this.type = type;
+		if (type == "image") {
+			this.image = new Image();
+			this.image.src = color;
+		}
+		this.width = width;
+		this.height = height;
+		this.speed = 1;
+		this.angle = 0;
+		this.moveAngle = 1;
+		this.x = x;
+		this.y = y;
+		this.hit = function()
+		{
+			hitCode = 1;
+			//this.baddienum = num;
+			//var whichBaddie = "MyBaddie" + baddienum;
+			this.x = -666;
+			this.y = -666;			
+		}
+
+
+		this.update = function() {
+			
+			
+			ctx = myGameArea.context;
+			if (type == "image") {
+				ctx.drawImage(this.image,
+					this.x,
+					this.y,
+					this.width, this.height);
+			} else {
+				ctx.fillStyle = '#000000';
+				ctx.fillRect(this.x, this.y, this.width, this.height);
+			}
+		} 
+		
+	
+		this.newPos = function() {
+			this.angle += this.moveAngle * Math.PI / 180;
+        	this.x += this.speed * Math.sin(this.angle);
+        	this.y -= this.speed * Math.cos(this.angle);
+        	this.y += 0.2;
+		}
+		if (this.y >= 640) { peoplePoint++; }
+
+		
+
+		
+	}
+
+	
+
+
+function virus(width, height, color, x, y, type) {
+  this.type = type;
+  if (type == "image") {
+			this.image = new Image();
+			this.image.src = color;
+		}
+  this.width = width;
+  this.height = height;
+  //this.x = x;
+  //this.y = y;
+  this.speedX = 0;
+  this.speedY = 0;
+  this.gravity = -1;
+  this.gravitySpeed = 0;
+
+  this.kill = function() {
+  	delete myVirus;
+  }
+
+  this.update = function() {
+    ctx = myGameArea.context;
+    if (type == "image") {
+
+    	if (launchCode == "1") {
+    				myAimVirusX = (myAimX + 15);
+    				ctx.drawImage(this.image,
+					
+					myAimVirusX,
+					
+					myAimVirusY,
+					this.width, this.height);
+    			}
+    	else {
+
+    				ctx.drawImage(this.image,
+					//this.x,
+					(myAimX + 15),
+					//this.y,
+					(myAimY - 40),
+					this.width, this.height);
+    	}
+			} else {
+				ctx.fillStyle = color;
+				ctx.fillRect((myAimX + 15), (myAimY - 40), this.width, this.height);
+			}
+  }
+
+  this.newPos = function() {
+  	
+    if (launchCode == "1"){
+    		
+    this.gravitySpeed += this.gravity;
+    //this.x += this.speedX;
+    //myAimVirusX += this.speedX;
+    (myAimX + 15);
+    //this.y += this.speedY + this.gravitySpeed;
+    myAimVirusY += this.speedY + this.gravitySpeed;
+  }
+  }
+  this.launch = function() {
+  	launchCode = 1;
+  	//this.gravitySpeed = .3;
+  }
+  this.reloadVirus = function() {
+  	if (myAimVirusY <= 0){
+  		myVirus = new virus(30,30, "virus.svg", 235, 520, "image");
+  		launchCode = 0;
+  		myAimVirusX = (myAimX + 15);
+  		myAimVirusY = (myAimY - 40);
+  	} 	
+  }
+  
+  this.crashWith = function(otherobject) {
+	  var tip = myAimVirusY;
+	  var leftedge = myAimVirusX;
+	  var rightedge = (myAimVirusX + 30);
+	  var otherbottom = otherobject.y + (otherobject.height);
+	  var otherleft = otherobject.x;
+	  var otherright = (otherobject.x + 30);
+	  if (hit == 0) {
+	  if(tip <= otherbottom) { 
+	  		if(leftedge <= otherright) {
+	  			
+	  			hit = 1;
+	  			//return hit;
+	  			myAimVirusX = -999;
+	  			myAimVirusY = -999;
+	  			
+	  		}
+	  		else { hit = 0; delete myVirus;}
+	  		if(rightedge >= otherleft) {
+	  			
+	  			hit = 1;
+	  			//return hit;
+	  			myAimVirusX = -999;
+	  			myAimVirusY = -999;
+	  			
+	  		}
+			else { hit = 0;}
+							 } 
+	  return hit;
+	  hit = 0;
+	  tip = 0;
+	  //leftedge = 0;
+	  //rightedge = 0;
+	  otherbottom = 0;
+	  otherleft = 0;
+	  otherright = 0;
+
+	}
+}
+}
+
+
+function updateGameArea() {
+    
+  	myGameArea.clear();
+  	//myScore.text = "SCORE: ";
+  	//myScore.update();
+  	
+    ctx = myGameArea.context;
+  	ctx.font = '20px Consolas';
+  	ctx.fillStyle = '#FFFFFF';
+	ctx.fillText(("Coronavirus: " + score +"   Humanity: " + peoplePoint), 80, 20);
+	
+
+  	myGamePiece.speedX = 0;
+    myGamePiece.speedY = 0;    
+    if (myGameArea.key && myGameArea.key == 37) {myGamePiece.speedX = -4; }
+    if (myGameArea.key && myGameArea.key == 39) {myGamePiece.speedX = 4; }
+    if (myGameArea.key && myGameArea.key == 38) {myGamePiece.speedY = -4; }
+    if (myGameArea.key && myGameArea.key == 40) {myGamePiece.speedY = 4; }
+    myGamePiece.newPos();    
+    myGamePiece.update();
+    myBaddie1.newPos();
+    myBaddie1.update();
+    myBaddie2.newPos();
+    myBaddie2.update();
+    myBaddie3.newPos();
+    myBaddie3.update();
+    myBaddie4.newPos();
+    myBaddie4.update();
+    myBaddie5.newPos();
+    myBaddie5.update();
+    //myVirus.newPos();
+   if (myGameArea.key && myGameArea.key == 32) {myVirus.launch(); }
+    myVirus.reloadVirus();
+    myVirus.newPos();
+    myVirus.update();
+    
+    
+    if  (score < 5) {
+    if (myVirus.crashWith(myBaddie1) == 1) { myBaddie1.hit(); score++; myVirus.reloadVirus(); }
+    else { myVirus.reloadVirus(); }
+    if (myVirus.crashWith(myBaddie2) == 1) { myBaddie2.hit(); score++; myVirus.reloadVirus(); }
+    else { myVirus.reloadVirus(); }
+    if (myVirus.crashWith(myBaddie3) == 1) { myBaddie3.hit(); score++; myVirus.reloadVirus(); }
+    else { myVirus.reloadVirus(); }
+	if (myVirus.crashWith(myBaddie4) == 1) { myBaddie4.hit(); score++; myVirus.reloadVirus(); }
+	else { myVirus.reloadVirus(); }
+	if (myVirus.crashWith(myBaddie5) == 1) { myBaddie5.hit(); score++; myVirus.reloadVirus(); }
+	
+	}
+
+	//else { myVirus.reloadVirus(); }
+    /*else { hit = 0;}
+     if (myVirus.crashWith(wave1[1]) == 1) { 
+    	baddieVar = "myBaddie";
+    	wave1[1].hit();
+    	score++;
+    }*/
+	if (myBaddie1.y >= 640) {
+	    	peoplePoint++;
+	    }
+
+       
+
+    
+	//myBaddie = new baddie(30, 70, "baddie.svg", 200, 100, "image");
+	//myBaddie2 = new baddie2(30, 70, "baddie.svg", 240, 180, "image");
+	
+	
+	
+}
+//}
+
+</script>
+</div>
+
+</div>
+
+</body>
+</html>
