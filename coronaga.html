@@ -298,14 +298,17 @@ function virus(width, height, color, x, y, type) {
   	} 	
   }
   
+
+
+
+
   this.crashWith = function(otherobject) {
-	  var tip = myAimVirusY;
-	  var leftedge = myAimVirusX;
-	  var rightedge = (myAimVirusX + 30);
-	  var otherbottom = otherobject.y + (otherobject.height);
-	  var otherleft = otherobject.x;
-	  var otherright = (otherobject.x + 30);
-	  if (hit == 0) {
+	  
+	  
+
+
+
+	  /*if (hit == 0) {
 	  if(tip <= otherbottom) { 
 	  		if(leftedge <= otherright) {
 	  			
@@ -335,9 +338,17 @@ function virus(width, height, color, x, y, type) {
 	  otherleft = 0;
 	  otherright = 0;
 
-	}
+	}*/
 }
 }
+
+
+function areBoxesColliding(virus, baddie) {
+	return (myAimVirusX < baddie.x + baddie.width &&
+        myAimVirusX + virus.width > baddie.x &&
+        myAimVirusY < baddie.y + baddie.height &&
+        myAimVirusY + virus.height > baddie.y)
+ }
 
 
 function updateGameArea() {
@@ -378,16 +389,12 @@ function updateGameArea() {
     
     
     if  (score < 5) {
-    if (myVirus.crashWith(myBaddie1) == 1) { myBaddie1.hit(); score++; myVirus.reloadVirus(); }
-    else { myVirus.reloadVirus(); }
-    if (myVirus.crashWith(myBaddie2) == 1) { myBaddie2.hit(); score++; myVirus.reloadVirus(); }
-    else { myVirus.reloadVirus(); }
-    if (myVirus.crashWith(myBaddie3) == 1) { myBaddie3.hit(); score++; myVirus.reloadVirus(); }
-    else { myVirus.reloadVirus(); }
-	if (myVirus.crashWith(myBaddie4) == 1) { myBaddie4.hit(); score++; myVirus.reloadVirus(); }
-	else { myVirus.reloadVirus(); }
-	if (myVirus.crashWith(myBaddie5) == 1) { myBaddie5.hit(); score++; myVirus.reloadVirus(); }
-	
+    if (areBoxesColliding(myVirus,myBaddie1)) { score++; myBaddie1.hit(); myVirus.reloadVirus();} 
+     if (areBoxesColliding(myVirus,myBaddie2)) { score++; myBaddie2.hit(); myVirus.reloadVirus();} 
+      if (areBoxesColliding(myVirus,myBaddie3)) { score++; myBaddie3.hit(); myVirus.reloadVirus();} 
+       if (areBoxesColliding(myVirus,myBaddie4)) { score++; myBaddie4.hit(); myVirus.reloadVirus();} 
+        if (areBoxesColliding(myVirus,myBaddie5)) { score++; myBaddie5.hit(); myVirus.reloadVirus();} 
+ 	
 	}
 
 	//else { myVirus.reloadVirus(); }
@@ -399,6 +406,7 @@ function updateGameArea() {
     }*/
 	if (myBaddie1.y >= 640) {
 	    	peoplePoint++;
+	    	delete myBaddie1;
 	    }
 
        
